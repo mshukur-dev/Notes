@@ -21,6 +21,18 @@ const Notes = () => {
             setIsLoading(false);
         }
     }
+    async function updateNote(id: number, newText: string) {
+        try {
+            await api.patch(`notes/${id}`, { content: newText });
+            setNotes((prev) =>
+                prev.map((note) =>
+                    note.id === id ? { ...note, content: newText } : note,
+                ),
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
     useEffect(() => {
         getData();
     }, []);
@@ -47,7 +59,13 @@ const Notes = () => {
                         </Button>
                     </div>
                 ) : notes.length > 0 ? (
-                    notes.map((note) => <NoteCard key={note.id} {...note} />)
+                    notes.map((note) => (
+                        <NoteCard
+                            updateNote={updateNote}
+                            key={note.id}
+                            {...note}
+                        />
+                    ))
                 ) : (
                     <h1>Заметок нет</h1>
                 )}
